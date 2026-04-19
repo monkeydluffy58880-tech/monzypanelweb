@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MonzyPanel Store</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:sans-serif;
+  background:#020617;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* BACKGROUND GLOW */
+body::before{
+  content:"";
+  position:fixed;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:radial-gradient(circle,#22c55e33,transparent 60%);
+  animation:glowMove 10s linear infinite;
+  z-index:-1;
+}
+@keyframes glowMove{
+  0%{transform:rotate(0deg)}
+  100%{transform:rotate(360deg)}
+}
+
+/* LANDING */
+#landing{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  transition:0.6s;
+}
+#landing.hide{opacity:0;pointer-events:none}
+
+.start-btn{
+  margin-top:20px;
+  padding:14px 25px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+}
+
+/* GRID */
+.container{padding:20px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+}
+
+/* CARD GLOW */
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+  transition:0.3s;
+}
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 15px #38bdf8, 0 0 30px #38bdf8;
+}
+
+/* BUTTON GLOW */
+.btn{
+  margin-top:10px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.btn::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:-100%;
+  width:100%;
+  height:100%;
+  background:linear-gradient(120deg,transparent,#4ade80,transparent);
+  transition:0.5s;
+}
+.btn:hover::before{
+  left:100%;
+}
+.btn:hover{
+  box-shadow:0 0 15px #22c55e, 0 0 30px #22c55e;
+}
+
+/* SLIDE */
+#orderPage{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#020617;
+  transform:translateX(100%);
+  transition:0.4s;
+  padding:20px;
+  z-index:999;
+}
+#orderPage.active{transform:translateX(0)}
+
+/* OVERLAY */
+#overlay{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  backdrop-filter:blur(5px);
+  opacity:0;
+  pointer-events:none;
+  transition:0.3s;
+}
+#overlay.active{opacity:1;pointer-events:auto}
+
+/* INPUT */
+input{
+  width:100%;
+  padding:10px;
+  margin:10px 0;
+  border:none;
+  border-radius:8px;
+}
+
+/* QRIS */
+#qrisPopup{
+  position:fixed;
+  bottom:-100%;
+  width:100%;
+  background:#1e293b;
+  padding:20px;
+  border-radius:20px 20px 0 0;
+  text-align:center;
+  transition:0.4s;
+}
+#qrisPopup.active{bottom:0}
+
+img{width:200px;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <h1>🔥 MonzyPanel Store</h1>
+  <p>Panel murah • auto create • cepat</p>
+  <button class="start-btn" onclick="startApp()">Masuk</button>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <h2>💰 Paket Panel</h2>
+  <div class="grid">
+
+    <div class="card"><h3>3GB</h3><p>Rp1.000</p><button class="btn" onclick="order('3GB - Rp1.000')">Beli</button></div>
+    <div class="card"><h3>4GB</h3><p>Rp2.000</p><button class="btn" onclick="order('4GB - Rp2.000')">Beli</button></div>
+    <div class="card"><h3>5GB</h3><p>Rp3.000</p><button class="btn" onclick="order('5GB - Rp3.000')">Beli</button></div>
+    <div class="card"><h3>6GB</h3><p>Rp4.000</p><button class="btn" onclick="order('6GB - Rp4.000')">Beli</button></div>
+    <div class="card"><h3>9GB</h3><p>Rp5.000</p><button class="btn" onclick="order('9GB - Rp5.000')">Beli</button></div>
+    <div class="card"><h3>10GB</h3><p>Rp6.000</p><button class="btn" onclick="order('10GB - Rp6.000')">Beli</button></div>
+    <div class="card"><h3>UNLIMITED 🔥</h3><p>Rp8.000</p><button class="btn" onclick="order('UNLIMITED - Rp8.000')">Beli</button></div>
+
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div id="overlay" onclick="closeAll()"></div>
+
+<!-- ORDER -->
+<div id="orderPage">
+  <h2>🛒 Order</h2>
+  <input id="nama" placeholder="Nama">
+  <input id="email" placeholder="Email">
+
+  <!-- UPLOAD -->
+  <input type="file" id="bukti" accept="image/*">
+  <img id="preview" style="display:none;width:100px;">
+
+  <p id="paketDipilih"></p>
+
+  <button class="btn" onclick="openQRIS()">Bayar</button>
+  <br><br>
+  <button onclick="closeAll()">⬅ Kembali</button>
+</div>
+
+<!-- QRIS -->
+<div id="qrisPopup">
+  <h3>Scan QRIS</h3>
+  <img src="https://i.imgur.com/zulY0PB.png">
+  <p>Setelah bayar klik tombol</p>
+  <button class="btn" onclick="kirimWA()">Saya Sudah Bayar</button>
+</div>
+
+<script>
+let paketGlobal="";
+let fileBukti=null;
+
+function startApp(){
+  document.getElementById("landing").classList.add("hide");
+}
+
+function order(p){
+  paketGlobal=p;
+  document.getElementById("paketDipilih").innerText="Paket: "+p;
+  document.getElementById("orderPage").classList.add("active");
+  document.getElementById("overlay").classList.add("active");
+}
+
+function openQRIS(){
+  document.getElementById("qrisPopup").classList.add("active");
+}
+
+function closeAll(){
+  document.getElementById("orderPage").classList.remove("active");
+  document.getElementById("overlay").classList.remove("active");
+  document.getElementById("qrisPopup").classList.remove("active");
+}
+
+document.getElementById("bukti").addEventListener("change", function(e){
+  fileBukti=e.target.files[0];
+  let reader=new FileReader();
+  reader.onload=function(){
+    let img=document.getElementById("preview");
+    img.src=reader.result;
+    img.style.display="block";
+  }
+  reader.readAsDataURL(fileBukti);
+});
+
+function kirimWA(){
+  let nama=document.getElementById("nama").value;
+  let email=document.getElementById("email").value;
+
+  let nomor="6283131342769";
+
+  let text=`Halo admin, saya sudah bayar
+Paket: ${paketGlobal}
+Nama: ${nama}
+Email: ${email}
+
+Saya sudah upload bukti transfer.`;
+
+  window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(text)}`);
+  alert("Kirim bukti transfer di WhatsApp ya!");
+}
+</script>
+
+</body>
+</html>
