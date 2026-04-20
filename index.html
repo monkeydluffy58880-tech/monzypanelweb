@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MonzyPanel Store</title>
+
+<style>
+body{font-family:sans-serif;background:#020617;color:white;margin:0}
+
+/* LANDING */
+#landing{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:linear-gradient(135deg,#0f172a,#1e293b);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+  transition:0.5s;
+}
+#landing.hide{opacity:0;pointer-events:none}
+
+.start-btn{
+  margin-top:20px;
+  padding:15px 25px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+}
+
+/* GRID */
+.container{padding:20px}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+/* CARD */
+.card{
+  background:#1e293b;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+}
+.btn{
+  margin-top:10px;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+}
+
+/* ORDER */
+#orderPage{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#020617;
+  transform:translateX(100%);
+  transition:0.3s;
+  padding:20px;
+}
+#orderPage.active{transform:translateX(0)}
+
+/* QRIS */
+#qrisBox{
+  position:fixed;
+  bottom:-100%;
+  width:100%;
+  background:#1e293b;
+  padding:20px;
+  text-align:center;
+  transition:0.4s;
+  border-radius:20px 20px 0 0;
+}
+#qrisBox.active{bottom:0}
+</style>
+</head>
+
+<body>
+
+<!-- LANDING -->
+<div id="landing">
+  <h1>🔥 MonzyPanel</h1>
+  <p>Panel murah • auto • cepat</p>
+  <button class="start-btn" onclick="startApp()">Masuk</button>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+<h2>💰 Paket Panel</h2>
+
+<div class="grid">
+
+<div class="card"><h3>3GB</h3><p>Rp1.000</p><button class="btn btn-order" data-paket="3GB - Rp1.000">Beli</button></div>
+<div class="card"><h3>4GB</h3><p>Rp2.000</p><button class="btn btn-order" data-paket="4GB - Rp2.000">Beli</button></div>
+<div class="card"><h3>5GB</h3><p>Rp3.000</p><button class="btn btn-order" data-paket="5GB - Rp3.000">Beli</button></div>
+<div class="card"><h3>6GB</h3><p>Rp4.000</p><button class="btn btn-order" data-paket="6GB - Rp4.000">Beli</button></div>
+<div class="card"><h3>9GB</h3><p>Rp5.000</p><button class="btn btn-order" data-paket="9GB - Rp5.000">Beli</button></div>
+<div class="card"><h3>10GB</h3><p>Rp6.000</p><button class="btn btn-order" data-paket="10GB - Rp6.000">Beli</button></div>
+<div class="card"><h3>UNLIMITED 🔥</h3><p>Rp8.000</p><button class="btn btn-order" data-paket="UNLIMITED - Rp8.000">Beli</button></div>
+
+</div>
+</div>
+
+<!-- ORDER -->
+<div id="orderPage">
+<h2>🛒 Order Panel</h2>
+
+<p id="paketDipilih"></p>
+
+<input id="nama" placeholder="Nama" style="width:100%;padding:10px;margin:10px 0;">
+
+<button class="btn" onclick="openQRIS()">Bayar (QRIS)</button>
+<br><br>
+<button onclick="closeOrder()">⬅ Kembali</button>
+</div>
+
+<!-- QRIS -->
+<div id="qrisBox">
+<h3>Scan QRIS</h3>
+
+<img src="https://i.imgur.com/zulY0PB.png" style="width:200px;border-radius:10px;">
+
+<p>Setelah bayar klik tombol</p>
+
+<button class="btn" onclick="kirimWA()">Saya Sudah Bayar</button>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+let paketGlobal="";
+
+/* START */
+window.startApp = function(){
+  document.getElementById("landing").classList.add("hide");
+}
+
+/* PRODUK */
+document.querySelectorAll(".btn-order").forEach(btn=>{
+  btn.addEventListener("click", function(){
+    paketGlobal = this.getAttribute("data-paket");
+    document.getElementById("paketDipilih").innerText = "Paket: " + paketGlobal;
+    document.getElementById("orderPage").classList.add("active");
+  });
+});
+
+/* ORDER */
+window.closeOrder = function(){
+  document.getElementById("orderPage").classList.remove("active");
+}
+
+/* QRIS */
+window.openQRIS = function(){
+  document.getElementById("qrisBox").classList.add("active");
+}
+
+/* WA */
+window.kirimWA = function(){
+  let nama = document.getElementById("nama").value;
+
+  let nomor = "6283131342769";
+
+  let text = `Halo admin, saya sudah bayar
+Paket: ${paketGlobal}
+Nama: ${nama}`;
+
+  window.open(`https://wa.me/${nomor}?text=${encodeURIComponent(text)}`);
+}
+
+});
+</script>
+
+</body>
+</html>
